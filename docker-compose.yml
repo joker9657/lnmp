@@ -1,0 +1,47 @@
+version: "3"
+services:
+  nginx:
+    build:
+      ./services/nginx
+    container_name: "my-nginx"
+    restart: always
+    ports:
+      - "${NGINX_HTTP_HOST_PORT}:80"
+      - "${NGINX_HTTPS_HOST_PORT}:443"
+    volumes:
+      - ${SOURCE_DIR}:/use/share/nginx/html
+      - ${NGINX_CONFD_DIR}:/etc/nginx/conf.d/:rw
+      - ${NGINX_CONF_FILE}:/etc/nginx/nginx.conf:ro
+      - ${NGINX_LOG_DIR}:/var/log/nginx/:rw
+    networks:
+      - default
+
+  php:
+    build:
+      ./services/php
+    container_name: "my-php"
+    volumes:
+      - ${SOURCE_DIR}:/www/:rw
+      - ${PHP_PHP_CONF_FILE}:/usr/local/etc/php/php.ini:ro
+      - ${PHP_FPM_CONF_FILE}:/usr/local/etc/php-fpm.d/www.conf:rw
+      - ${PHP_LOG_DIR}:/var/log/php
+    restart: always
+    networks:
+      - default
+  mysql:
+    build:
+      ./services/mysql
+    container_name: "my-mysql"
+    ports:
+      - "${MYSQL_HOST_PORT}:3306"
+    volumes:
+        - ${MYSQL_CONF_FILE}:/etc/mysql/conf.d/mysql.cnf:ro
+        - ${DATA_DIR}/mysql:/var/lib/mysql/:rw
+    restart: always
+    networks:
+      - default
+    environment:
+      MYSQL_ROOT_PASSWORD: "${MYSQL_ROOT_PASSWORD}"
+      TZ: "$TZ"
+networks:
+  default:
