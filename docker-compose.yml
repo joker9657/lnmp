@@ -22,7 +22,7 @@ services:
     container_name: "my-php"
     volumes:
       - ${SOURCE_DIR}:/www/:rw
-      - ${PHP_PHP_CONF_FILE}:/usr/local/etc/php/php.ini:ro
+      - ${PHP_PHP_CONF_FILE}:/usr/local/etc/php/php.ini:rw
       - ${PHP_FPM_CONF_FILE}:/usr/local/etc/php-fpm.d/www.conf:rw
       - ${PHP_LOG_DIR}:/var/log/php
     restart: always
